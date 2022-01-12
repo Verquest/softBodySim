@@ -24,7 +24,9 @@ public class BallDragger implements MouseListener {
     @Override
     public void mousePressed(MouseEvent e) {
         for(Joint joint: joints) {
-            if (Math.hypot(e.getX() - joint.getActualX() - joint.getDrawSize() / 2, e.getY() - joint.getActualY() - joint.getDrawSize()) < joint.getDrawSize()) {
+            //(float) Math.sqrt(Math.pow(e.getX()- joint1.getActualX() - joint.getDrawSize() / 2, 2) + e.getY() - joint1.getActualY() - joint.getDrawSize(),2))
+            if ((float) Math.sqrt(Math.pow(e.getX()- joint.getActualX() - joint.getDrawSize(), 2) +
+                    Math.pow(e.getY() - joint.getActualY() - joint.getDrawSize()/2 - 30,2)) < joint.getDrawSize()) {
                 stopper = true;
                 invoker.setStopper(joint);
                 dragHandler = new DragAndDropHandler(joint, invoker);
