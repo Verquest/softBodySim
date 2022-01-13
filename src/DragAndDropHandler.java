@@ -1,3 +1,5 @@
+import java.awt.*;
+
 public class DragAndDropHandler implements Runnable{
     private Joint joint;
     private boolean run = true;
@@ -12,10 +14,15 @@ public class DragAndDropHandler implements Runnable{
     @Override
     public void run() {
         while (run){
-            joint.setActualX((float)invoker.getMousePosition().getX() - joint.getDrawSize());
-            joint.setActualY((float)invoker.getMousePosition().getY() - joint.getDrawSize()/2 - 30);
-            invoker.repaint();
+            try {
+                joint.setActualX((float)invoker.getMousePosition().getX() - joint.getDrawSize());
+                invoker.repaint();
+            } catch (NullPointerException e) { }
+            try {
+                joint.setActualY((float)invoker.getMousePosition().getY() - joint.getDrawSize()/2 - 30);
+                invoker.repaint();
+            } catch (NullPointerException e) { }
         }
-        joint.resetAcceleration();
+
     }
 }

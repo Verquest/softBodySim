@@ -6,7 +6,7 @@ public class Spring{
     private Vector normalVector = new Vector(0, 0);
     private final float restLength;
     public final Joint joint, joint1;
-    private float k;
+    private final float k;
     public boolean isOutsideSpring = false;
     public Spring(Joint joint, Joint joint1, float restLength, float k) {
         this.joint = joint;
@@ -43,7 +43,7 @@ public class Spring{
             normalX = Math.abs(joint.getActualX() - joint1.getActualX());
             normalY = Math.abs(joint.getActualY() - joint1.getActualY());
             if(joint.getActualX() < joint1.getActualX()) {
-                if(joint.getActualY() < joint1.getActualY()) {
+                if(joint.getActualY() <= joint1.getActualY()) {
                     //good
                     normalVector.setX(-normalY);
                     normalVector.setY(normalX);

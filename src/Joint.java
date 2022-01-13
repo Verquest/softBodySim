@@ -5,23 +5,30 @@ public class Joint{
     private final int size;
     private Vector velocity, position, acceleration, gravity, lastVelo;
     private Color color;
-    private final float mass, bounciness;
+    private final float mass;
     private boolean stationary = false;
-    public static int id = 0;
     Joint(int x, int y, int size){
         acceleration = new Vector(0,0);
         lastVelo = new Vector(0,0);
         velocity = new Vector(0,0);
         position = new Vector(x, y);
-        gravity = new Vector(0, 0.5f);
-        mass = 1f;
-        bounciness = 1f;
+        gravity = new Vector(0, 1f);
+        mass = 0.5f;
         color = Color.BLACK;
         this.size = size;
-        id++;
+    }
+    Joint(float x, float y, int size){
+        acceleration = new Vector(0,0);
+        lastVelo = new Vector(0,0);
+        velocity = new Vector(0,0);
+        position = new Vector(x, y);
+        gravity = new Vector(0, 1f);
+        mass = 0.5f;
+        color = Color.BLACK;
+        this.size = size;
     }
     public void applyForce(Vector force){
-        force.div(mass);
+        force = force.mult(mass);
         acceleration = acceleration.add(force);
     }
     public void resetAcceleration(){
@@ -34,14 +41,12 @@ public class Joint{
             velocity = velocity.add(acceleration);
             velocity = velocity.add(gravity);
             lastVelo = velocity;
-            System.out.println(lastVelo);
             pendingPosition = position.add(velocity);
             int pendingX = (int) pendingPosition.getX();
             int pendingY = (int) pendingPosition.getY();
             if (pendingX > size / 2 && pendingX < 770 - size) {
                 position.setX(pendingPosition.getX());
             }
-
             if (pendingY > size / 2 && pendingY < 770 - size) {
                 position.setY(pendingPosition.getY());
             }
