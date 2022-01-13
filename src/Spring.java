@@ -2,26 +2,32 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Line2D;
 
-public class Spring extends JPanel {
+public class Spring{
+    private Vector normalVector = new Vector(0, 0);
     private final float restLength;
-     final Joint joint;
-     final Joint joint1;
+    public final Joint joint, joint1;
     private float k;
+    public boolean isOutsideSpring = false;
     public Spring(Joint joint, Joint joint1, float restLength, float k) {
         this.joint = joint;
         this.joint1 = joint1;
         this.restLength = restLength;
         this.k = k;
-        this.setOpaque(true);
     }
     public Spring(Joint joint, Joint joint1, float k) {
         this.joint = joint;
         this.joint1 = joint1;
-        this.restLength = (float) Math.sqrt(Math.pow(joint.getActualX()- joint1.getActualX(),2) + Math.pow(joint.getActualY()- joint1.getActualY(),2));
-        //this.restLength = Math.abs((int)Math.hypot(joint.getActualX()- joint1.getActualX(), joint.getActualY())- joint1.getActualY());
+        this.restLength = getCurrentLength();
         System.out.println(restLength);
         this.k = k;
-        this.setOpaque(true);
+    }
+    public Spring(Joint joint, Joint joint1, float k, boolean isOutsideSpring) {
+        this.joint = joint;
+        this.joint1 = joint1;
+        this.restLength = getCurrentLength();
+        this.isOutsideSpring = isOutsideSpring;
+        System.out.println(restLength);
+        this.k = k;
     }
     public void update(){
         Vector force = Vector.sub(joint1.getPosition(), joint.getPosition());
@@ -31,14 +37,37 @@ public class Spring extends JPanel {
         joint.applyForce(force);
         force = force.mult(-1);
         joint1.applyForce(force);
+        float currentLength = getCurrentLength();
+        float normalX, normalY;
+        if(isOutsideSpring) {
+            normalX = Math.abs(joint.getActualX() - joint1.getActualX());
+            normalY = Math.abs(joint.getActualY() - joint1.getActualY());
+            if(joint.getActualX() < joint1.getActualX()) {
+                if(joint.getActualY() < joint1.getActualY()) {
+                    //good
+                    normalVector.setX(-normalY);
+                    normalVector.setY(normalX);
+                }else{
+                    normalVector.setX(normalY);
+                    normalVector.setY(normalX);
+                }
+            }else{
+                if(joint.getActualY() < joint1.getActualY()) {
+                    //good
+                    normalVector.setX(-normalY);
+                    normalVector.setY(-normalX);
+                }else{
+                    normalVector.setX(normalY);
+                    normalVector.setY(-normalX);
+                }
+            }
+        }
     }
 
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        g.setColor(Color.BLACK);
-        System.out.println("DRAWSIZE " + joint1.getDrawSize());
-        g.drawLine((int)joint.getActualX() + joint1.getDrawSize()/2, (int)joint.getActualY() + joint1.getDrawSize()/2,
-                (int)joint1.getActualX() + joint1.getDrawSize()/2, (int)joint1.getActualY() + joint1.getDrawSize()/2);
+    public float getCurrentLength(){
+        return (float) Math.sqrt(Math.pow(joint.getActualX()- joint1.getActualX(),2) + Math.pow(joint.getActualY()- joint1.getActualY(),2));
+    }
+    public Vector getNormalVector(){
+        return normalVector;
     }
 }

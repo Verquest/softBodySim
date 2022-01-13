@@ -1,22 +1,24 @@
 import javax.swing.*;
 import java.awt.*;
 
-public class Joint extends JPanel{
+public class Joint{
     private final int size;
-    private Vector velocity, position, acceleration, gravity;
+    private Vector velocity, position, acceleration, gravity, lastVelo;
     private Color color;
     private final float mass, bounciness;
     private boolean stationary = false;
+    public static int id = 0;
     Joint(int x, int y, int size){
         acceleration = new Vector(0,0);
+        lastVelo = new Vector(0,0);
         velocity = new Vector(0,0);
         position = new Vector(x, y);
-        gravity = new Vector(0, 0.05f);
+        gravity = new Vector(0, 0.5f);
         mass = 1f;
         bounciness = 1f;
         color = Color.BLACK;
         this.size = size;
-        this.setOpaque(true);
+        id++;
     }
     public void applyForce(Vector force){
         force.div(mass);
@@ -31,24 +33,20 @@ public class Joint extends JPanel{
             velocity = velocity.mult(0.8f);
             velocity = velocity.add(acceleration);
             velocity = velocity.add(gravity);
+            lastVelo = velocity;
+            System.out.println(lastVelo);
             pendingPosition = position.add(velocity);
             int pendingX = (int) pendingPosition.getX();
             int pendingY = (int) pendingPosition.getY();
-            if (pendingX >= size / 2 && pendingX <= 770 - size) {
+            if (pendingX > size / 2 && pendingX < 770 - size) {
                 position.setX(pendingPosition.getX());
             }
 
-            if (pendingY >= size / 2 && pendingY <= 770 - size) {
+            if (pendingY > size / 2 && pendingY < 770 - size) {
                 position.setY(pendingPosition.getY());
             }
             acceleration = acceleration.mult(0);
         }
-    }
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        g.setColor(color);
-        g.fillOval((int)position.getX(), (int)position.getY(), size, size);
     }
     public void addToVelocity(Vector vector){
         velocity = velocity.add(vector);
@@ -61,6 +59,15 @@ public class Joint extends JPanel{
     }
     public Color getColor() {
         return color;
+    }
+    public Vector getVelocity(){
+        return velocity;
+    }
+    public Vector getLastVelo(){
+        return lastVelo;
+    }
+    public void setVelocity(Vector v){
+         velocity = v;
     }
     public float getActualX() {
         return position.getX();
@@ -75,6 +82,9 @@ public class Joint extends JPanel{
 
     public void setActualY(float y) {
         position.setY(y);
+    }
+    public void setColor(Color c){
+        color = c;
     }
     public void setGravity(Vector gravity){
         this.gravity = gravity;
